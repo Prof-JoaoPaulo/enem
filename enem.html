@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Don't Blink — Uma pausa antes do ENEM</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#18202a;
+    --muted:#667085;
+    --accent:#284b63;
+    --accent2:#3c6e71;
+    --soft:#eaf1f4;
+    --line:#dfe5ea;
+    --ok:#e8f5ee;
+    --shadow:0 12px 35px rgba(24,32,42,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--text);
+    background:linear-gradient(135deg,#f7f9fc 0%,#eef4f5 100%);
+    line-height:1.6;
+  }
+  .wrap{max-width:900px;margin:auto;padding:32px 20px 70px}
+  .hero{
+    min-height:82vh;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:50px 10px;
+  }
+  .hero-card{
+    max-width:760px;background:rgba(255,255,255,.88);
+    border:1px solid rgba(255,255,255,.9);border-radius:28px;
+    padding:55px 42px;box-shadow:var(--shadow);
+  }
+  .eyebrow{
+    text-transform:uppercase;letter-spacing:.16em;font-size:.78rem;
+    color:var(--accent2);font-weight:800;
+  }
+  h1{font-size:clamp(2.3rem,7vw,5rem);line-height:.95;margin:18px 0 10px}
+  .subtitle{font-size:1.15rem;color:var(--muted);max-width:620px;margin:0 auto 28px}
+  .quote{font-family:Georgia,serif;font-size:1.35rem;font-style:italic;margin:30px auto;max-width:620px}
+  button,.btn{
+    border:0;border-radius:999px;padding:13px 21px;font-size:1rem;font-weight:700;
+    cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;
+    background:var(--accent);color:white;transition:.2s;
+  }
+  button:hover,.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  .btn.secondary{background:white;color:var(--accent);border:1px solid var(--line)}
+  .section{
+    background:var(--card);border-radius:24px;padding:34px;
+    margin:22px 0;box-shadow:var(--shadow);border:1px solid var(--line);
+  }
+  .section h2{margin-top:0;font-size:1.8rem}
+  .small{color:var(--muted);font-size:.95rem}
+  .progress{position:sticky;top:0;z-index:10;background:rgba(245,247,251,.92);
+    backdrop-filter:blur(10px);padding:10px 0 8px}
+  .bar{height:8px;background:#dde5e8;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--accent2);transition:.3s}
+  .music-player{
+    position:relative;
+    width:100%;
+    max-width:760px;
+    aspect-ratio:16/9;
+    margin:22px auto 8px;
+    border-radius:18px;
+    overflow:hidden;
+    background:#111;
+    box-shadow:0 10px 28px rgba(24,32,42,.12);
+  }
+  .music-player iframe{
+    width:100%;
+    height:100%;
+    border:0;
+    display:block;
+  }
+  .music-note{text-align:center;margin-bottom:24px}
+  .question{margin:28px 0}
+  label{display:block;font-weight:700;margin-bottom:9px}
+  textarea,input[type=text]{
+    width:100%;border:1px solid var(--line);border-radius:14px;padding:14px;
+    font:inherit;resize:vertical;outline:none;background:#fbfcfd;
+  }
+  textarea:focus,input[type=text]:focus{border-color:var(--accent2);box-shadow:0 0 0 4px rgba(60,110,113,.1)}
+  .choices{display:grid;gap:10px}
+  .choice{
+    border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+    cursor:pointer;background:#fff;display:flex;gap:12px;align-items:flex-start;
+  }
+  .choice:hover{background:#f8fafb}
+  .choice.selected{border-color:var(--accent2);background:var(--soft)}
+  .choice input{margin-top:5px}
+  .columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .box{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fbfcfd}
+  .box h3{margin-top:0}
+  .green{background:var(--ok)}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
+  .message{
+    display:none;background:var(--soft);border-left:5px solid var(--accent2);
+    padding:20px;border-radius:12px;margin-top:25px
+  }
+  .final{
+    text-align:center;padding:60px 20px
+  }
+  .final h2{font-size:2.3rem;margin-bottom:8px}
+  .blink{font-family:Georgia,serif;font-style:italic;font-size:1.45rem}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:30px}
+  @media(max-width:700px){
+    .hero-card,.section{padding:27px 21px}
+    .columns{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="progress">
+    <div class="small" id="progressText">Começando...</div>
+    <div class="bar"><div class="fill" id="progressFill"></div></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-card">
+      <div class="eyebrow">Uma experiência antes do ENEM</div>
+      <h1>Don't Blink.</h1>
+      <p class="subtitle">
+        Antes de pensar na prova, pare por alguns minutos e pense em você,
+        no caminho que percorreu e no que realmente importa.
+      </p>
+      <p class="quote">“O futuro ainda não aconteceu. Este momento, sim.”</p>
+      <button onclick="goTo('musica')">Começar a experiência ↓</button>
+    </div>
+  </section>
+
+  <section class="section" id="musica">
+    <h2>1. Primeiro, apenas ouça.</h2>
+    <p>
+      Procure um lugar tranquilo. Coloque os fones, se puder, e ouça
+      <strong>“Don't Blink”, de Kenny Chesney</strong>.
+    </p>
+    <p class="small">
+      Não tente interpretar tudo de imediato. Apenas escute e perceba
+      quais ideias, lembranças ou sentimentos a música provoca em você.
+    </p>
+    <div class="music-player">
+      <iframe
+        src="https://www.youtube.com/embed/4f0p5KqdU9U?rel=0"
+        title="Kenny Chesney - Don't Blink (Official Video)"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <p class="small music-note">
+      A música é reproduzida diretamente pelo player oficial do YouTube, sem precisar abrir outra página.
+    </p>
+    <div class="question">
+      <label for="q1">Depois de ouvir, qual foi a primeira ideia que veio à sua cabeça?</label>
+      <textarea id="q1" rows="4" placeholder="Escreva livremente..."></textarea>
+    </div>
+    <button onclick="goTo('ingles')">Continuar →</button>
+  </section>
+
+  <section class="section" id="ingles">
+    <h2>2. What does “Don't Blink” mean?</h2>
+    <p>
+      A expressão <strong>“don't blink”</strong> significa literalmente
+      “não pisque”. Mas, no contexto da música, ela ganha um sentido
+      figurado relacionado ao tempo e à rapidez com que a vida passa.
+    </p>
+
+    <div class="question">
+      <label>Qual interpretação melhor representa a ideia central?</label>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="q2" value="a"> A música fala apenas sobre aproveitar festas e momentos de diversão.</label>
+        <label class="choice"><input type="radio" name="q2" value="b"> A música sugere que devemos perceber e valorizar a vida enquanto ela acontece.</label>
+        <label class="choice"><input type="radio" name="q2" value="c"> A música defende que precisamos ter pressa para alcançar nossos objetivos.</label>
+        <label class="choice"><input type="radio" name="q2" value="d"> A música apresenta uma crítica ao sistema educacional.</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label for="q3">Why do you think the songwriter chose the image of blinking?</label>
+      <textarea id="q3" rows="4" placeholder="Answer in English or Portuguese."></textarea>
+    </div>
+
+    <button onclick="goTo('futuro')">Continuar →</button>
+  </section>
+
+  <section class="section" id="futuro">
+    <h2>3. Uma mensagem do futuro</h2>
+    <p>
+      Imagine que estamos em <strong>novembro de 2027</strong>.
+      O ENEM já passou. Você está olhando para trás e lembrando
+      da pessoa que era hoje.
+    </p>
+    <p class="small">
+      Escreva uma mensagem para você mesmo neste momento.
+      Não precisa ser bonita. Precisa ser verdadeira.
+    </p>
+
+    <div class="question">
+      <label for="q4">O que você gostaria de dizer para o seu “eu” de hoje?</label>
+      <textarea id="q4" rows="6" placeholder="Querido eu de 2026..."></textarea>
+    </div>
+
+    <div class="question">
+      <label for="q5">Do que você espera se orgulhar quando olhar para este período?</label>
+      <textarea id="q5" rows="4"></textarea>
+    </div>
+
+    <div class="question">
+      <label for="q6">Se o resultado do ENEM não for exatamente o que você espera, o que você gostaria de lembrar?</label>
+      <textarea id="q6" rows="4"></textarea>
+    </div>
+
+    <button onclick="goTo('controle')">Continuar →</button>
+  </section>
+
+  <section class="section" id="controle">
+    <h2>4. O que está sob seu controle?</h2>
+    <p>
+      Às vezes, a ansiedade aparece porque tentamos controlar coisas
+      que não dependem de nós. Separe mentalmente as situações abaixo.
+    </p>
+
+    <div class="columns">
+      <div class="box green">
+        <h3>🟢 Depende de mim</h3>
+        <p>Minha preparação, meu esforço, meu descanso, minha atitude, meu tempo de prova.</p>
+      </div>
+      <div class="box">
+        <h3>🔴 Não depende de mim</h3>
+        <p>O tema da redação, a dificuldade da prova, a nota dos outros, o resultado antes de ele acontecer.</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <label for="q7">Qual é uma coisa que você precisa parar de tentar controlar?</label>
+      <textarea id="q7" rows="3"></textarea>
+    </div>
+
+    <div class="question">
+      <label for="q8">Qual é uma coisa que você ainda pode fazer por você antes da prova?</label>
+      <textarea id="q8" rows="3"></textarea>
+    </div>
+
+    <button onclick="goTo('fechamento')">Continuar →</button>
+  </section>
+
+  <section class="section" id="fechamento">
+    <h2>5. Uma última escolha</h2>
+    <p>
+      O ENEM é importante. Mas ele é uma parte da sua história,
+      não a história inteira.
+    </p>
+
+    <div class="question">
+      <label>O que você quer levar com você para a prova?</label>
+      <div class="choices">
+        <label class="choice"><input type="checkbox" name="q9" value="calma"> Calma</label>
+        <label class="choice"><input type="checkbox" name="q9" value="confianca"> Confiança</label>
+        <label class="choice"><input type="checkbox" name="q9" value="persistencia"> Persistência</label>
+        <label class="choice"><input type="checkbox" name="q9" value="coragem"> Coragem</label>
+        <label class="choice"><input type="checkbox" name="q9" value="leveza"> Leveza</label>
+        <label class="choice"><input type="checkbox" name="q9" value="presenca"> Presença — estar realmente ali</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label for="q10">Complete a frase: “Independentemente do resultado, eu quero poder dizer que...”</label>
+      <textarea id="q10" rows="4"></textarea>
+    </div>
+
+    <div class="actions">
+      <button onclick="finalizar()">Concluir experiência</button>
+      <button class="btn secondary" onclick="salvarTxt()">Salvar minhas respostas</button>
+    </div>
+
+    <div class="message" id="resultado">
+      <strong>Você chegou até aqui.</strong>
+      <p>
+        Faça o que está ao seu alcance. Respire. Leia com atenção.
+        Confie no caminho que você construiu.
+      </p>
+      <p class="blink">Don't blink.</p>
+      <p>
+        Não porque você precisa correr.<br>
+        Mas porque este momento também faz parte da sua história.
+      </p>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>Uma prova pode abrir uma porta.</h2>
+    <p>
+      Mas nenhuma prova é capaz de definir toda a pessoa que você é.
+    </p>
+    <p class="blink">Faça o seu melhor. E depois, siga em frente.</p>
+  </section>
+
+  <footer>
+    Atividade motivacional — experiência individual antes do ENEM.
+  </footer>
+</div>
+
+<script>
+const sections = ['musica','ingles','futuro','controle','fechamento'];
+
+function goTo(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  updateProgress();
+}
+
+function updateProgress(){
+  const y = window.scrollY + window.innerHeight * .35;
+  let index = 0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el.offsetTop <= y) index=i;
+  });
+  const percent=Math.round(((index+1)/sections.length)*100);
+  document.getElementById('progressFill').style.width=percent+'%';
+  document.getElementById('progressText').textContent=
+    'Etapa '+(index+1)+' de '+sections.length;
+}
+window.addEventListener('scroll',updateProgress);
+updateProgress();
+
+document.querySelectorAll('.choice').forEach(label=>{
+  const input=label.querySelector('input');
+  input.addEventListener('change',()=>{
+    if(input.type==='radio'){
+      document.querySelectorAll('input[name="'+input.name+'"]').forEach(r=>{
+        r.closest('.choice').classList.toggle('selected',r.checked);
+      });
+    }else{
+      label.classList.toggle('selected',input.checked);
+    }
+  });
+});
+
+function answers(){
+  const data={};
+  for(let i=1;i<=10;i++){
+    const el=document.getElementById('q'+i);
+    if(el) data['q'+i]=el.value;
+  }
+  data.q2=document.querySelector('input[name="q2"]:checked')?.value || '';
+  data.q9=[...document.querySelectorAll('input[name="q9"]:checked')].map(x=>x.value).join(', ');
+  return data;
+}
+
+function saveLocal(){
+  localStorage.setItem('dontBlinkENEM',JSON.stringify(answers()));
+}
+document.querySelectorAll('textarea').forEach(el=>{
+  el.addEventListener('input',saveLocal);
+});
+document.querySelectorAll('input').forEach(el=>{
+  el.addEventListener('change',saveLocal);
+});
+
+function finalizar(){
+  saveLocal();
+  document.getElementById('resultado').style.display='block';
+  document.getElementById('resultado').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function salvarTxt(){
+  const a=answers();
+  const texto=
+`DON'T BLINK — MINHA REFLEXÃO ANTES DO ENEM
+
+1. Primeira ideia após a música:
+${a.q1 || '(não respondido)'}
+
+2. Interpretação escolhida:
+${a.q2 || '(não respondido)'}
+
+3. Why do you think the songwriter chose the image of blinking?
+${a.q3 || '(não respondido)'}
+
+4. Mensagem para meu eu de hoje:
+${a.q4 || '(não respondido)'}
+
+5. Do que espero me orgulhar:
+${a.q5 || '(não respondido)'}
+
+6. Se o resultado não for o esperado:
+${a.q6 || '(não respondido)'}
+
+7. O que preciso parar de tentar controlar:
+${a.q7 || '(não respondido)'}
+
+8. O que ainda posso fazer por mim:
+${a.q8 || '(não respondido)'}
+
+9. O que quero levar para a prova:
+${a.q9 || '(não respondido)'}
+
+10. Independentemente do resultado, eu quero poder dizer que...
+${a.q10 || '(não respondido)'}
+
+--------------------------------
+Don't blink.
+Este momento também faz parte da minha história.
+`;
+  const blob=new Blob([texto],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download='minha-reflexao-dont-blink.txt';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+window.addEventListener('load',()=>{
+  const saved=JSON.parse(localStorage.getItem('dontBlinkENEM')||'{}');
+  Object.entries(saved).forEach(([key,value])=>{
+    const el=document.getElementById(key);
+    if(el && typeof value==='string') el.value=value;
+  });
+  if(saved.q2){
+    const r=document.querySelector('input[name="q2"][value="'+saved.q2+'"]');
+    if(r){r.checked=true;r.closest('.choice').classList.add('selected');}
+  }
+  if(saved.q9){
+    saved.q9.split(', ').filter(Boolean).forEach(v=>{
+      const c=document.querySelector('input[name="q9"][value="'+v+'"]');
+      if(c){c.checked=true;c.closest('.choice').classList.add('selected');}
+    });
+  }
+});
+</script>
+</body>
+</html>
